@@ -31,7 +31,7 @@ gerar.py pre|pos --pr      local: renderiza os JPEG e abre um PR com a prévia
         ▼  merge do PR = aprovação
 GitHub Actions publicar.yml  no merge e a cada 30 min: publica o que está no horário
 GitHub Actions metricas.yml  todo dia 09:00: métricas dos posts e da conta, metricas/RELATORIO.md
-GitHub Actions token.yml     toda segunda: renova o token do Instagram
+GitHub Actions token.yml     toda segunda: renova o token (só no login do Instagram legado)
 ```
 
 As imagens são servidas pelo próprio repositório (`raw.githubusercontent.com`, fixado no commit), por isso **o repositório precisa ser público**. Os segredos ficam nos Secrets do GitHub, nunca no código.
@@ -61,18 +61,21 @@ Para tirar um post da fila antes de publicar: apague a pasta em `main` ou mude `
 
 ## Configuração (uma vez)
 
-1. **Conta profissional.** No app do Instagram: Configurações, Tipo de conta e ferramentas, Mudar para conta profissional (Criador de conteúdo ou Empresa). Não precisa de Página do Facebook.
-2. **App na Meta.** Em [developers.facebook.com](https://developers.facebook.com/apps), crie um app do tipo Empresa com o caso de uso de Instagram ("API do Instagram com login do Instagram"). Os nomes no painel mudam com frequência; o caminho é o caso de uso do Instagram, configuração da API com login do Instagram.
-3. **Permissões.** `instagram_business_basic`, `instagram_business_content_publish` e `instagram_business_manage_insights`. Para uso na própria conta, com o app em modo de desenvolvimento e a conta adicionada como testadora, não precisa de revisão do app.
-4. **Token.** Na mesma tela, adicione a conta @cartolaemdados e gere o token. Ele é de longa duração (60 dias) e o `token.yml` renova toda semana. Confira localmente:
+Desde o fim de outubro de 2026, a Meta recomenda o **login unificado** para a API do Instagram, e é o que este projeto usa por padrão (`IG_LOGIN=unificado`, API em `graph.facebook.com`). O login do Instagram antigo continua suportado com `IG_LOGIN=instagram`.
+
+1. **Conta profissional** no Instagram (Criador de conteúdo ou Empresa). Não precisa de Página do Facebook.
+2. **App na Meta** ([developers.facebook.com/apps](https://developers.facebook.com/apps)): Criar app, caso de uso **Gerenciar mensagens e conteúdo no Instagram**, sem portfólio no assistente.
+3. **Portfólio empresarial.** Em Casos de uso, Personalizar, **API setup with Unified login**: conecte um portfólio próprio do Cartola em Dados (criar é grátis; para uso na própria conta não precisa de verificação).
+4. **Configuração** na mesma aba: permissões obrigatórias mais `instagram_content_publish` e `instagram_manage_insights`; expiração do token **Nunca**, se houver a opção; URL de redirecionamento `https://cartolaemdados.com.br/` (obrigatória, não é usada).
+5. **Token.** Em Gerar tokens de acesso, adicione o @cartolaemdados como testador do Instagram, aceite o convite (Instagram na web: Configurações, Permissões do site, Apps e sites, Convites de testador) e clique em Gerar token. Ele aparece uma vez só. Com o app em modo de desenvolvimento, não precisa de análise do app.
+6. **Confira e grave o segredo**, sem o token passar pelo histórico do shell:
    ```bash
-   IG_TOKEN='...' .venv/bin/python checar.py
+   read -rs -p "Token: " IG_TOKEN && echo && export IG_TOKEN \
+     && .venv/bin/python checar.py \
+     && printf %s "$IG_TOKEN" | gh secret set IG_TOKEN -R GuilhermeDeOliveiraAmorim/cartolaemdados-instagram
    ```
-5. **Repositório público no GitHub** com este diretório, branch `main`.
-6. **Secrets do repositório** (Settings, Secrets and variables, Actions):
-   - `IG_TOKEN`: o token do passo 4.
-   - `GH_PAT`: token fine-grained do GitHub só deste repositório, com permissão *Secrets: Read and write* (usado pelo `token.yml` para regravar o `IG_TOKEN`).
-7. **Actions.** Settings, Actions, General, Workflow permissions: *Read and write*. Rode o `Métricas` uma vez à mão (`workflow_dispatch`) para validar o token no Actions.
+   O `checar.py` mostra a conta, a cota de publicação e quando o token vence.
+7. **Validade.** O token de sistema não é renovado pelo `token.yml` (ele só age com `IG_LOGIN=instagram`). Se o `checar.py` mostrar uma data de expiração, gere um novo no painel antes dela.
 
 ## Métricas
 
@@ -88,7 +91,7 @@ A API não dá métrica de cada slide de um carrossel, só do post inteiro.
 gerar.py           gera os posts na fila (local) e abre o PR
 publicar.py        publica o que está no horário (Actions)
 metricas.py        coleta métricas e gera o relatório (Actions)
-renovar_token.py   renova o token (Actions)
+renovar_token.py   renova o token do login do Instagram legado (Actions)
 checar.py          confere token, conta e cota de publicação
 ig/                config, leitura dos dados, renderização, fila, cliente da API
 ig/pautas/         uma pauta por arquivo: monta slides, legenda e horário

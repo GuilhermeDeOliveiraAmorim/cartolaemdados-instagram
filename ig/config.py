@@ -16,9 +16,13 @@ FUSO = ZoneInfo("America/Sao_Paulo")
 DOMINIO = "cartolaemdados.com.br"
 PERFIL = "@cartolaemdados"
 
-# Instagram API com login do Instagram (sem Página do Facebook).
-IG_HOST = "https://graph.instagram.com"
+# "unificado": login unificado da Meta (padrão desde out/2026). Token de sistema do portfólio
+#   empresarial, API em graph.facebook.com.
+# "instagram": API com login do Instagram (legado), token de usuário em graph.instagram.com.
+IG_LOGIN = os.environ.get("IG_LOGIN", "unificado")
+IG_HOST = "https://graph.facebook.com" if IG_LOGIN == "unificado" else "https://graph.instagram.com"
 IG_VERSAO = os.environ.get("IG_VERSAO", "v27.0")
+IG_USER_ID = os.environ.get("IG_USER_ID")  # opcional; sem ele, descobre pela API
 
 LARGURA, ALTURA = 1080, 1350  # 4:5, o maior formato vertical do feed
 

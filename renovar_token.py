@@ -4,10 +4,16 @@ O workflow token.yml roda isso toda semana e grava o resultado no segredo IG_TOK
 """
 import os
 
+from ig import config
 from ig.api import Instagram
 
 if not os.environ.get("IG_TOKEN"):
     print("IG_TOKEN não configurado; nada a renovar")
+    raise SystemExit(0)
+
+if config.IG_LOGIN == "unificado":
+    print("login unificado: token de sistema do portfólio, sem renovação por aqui. "
+          "Se a configuração tiver expiração, gere um novo no painel da Meta antes de vencer.")
     raise SystemExit(0)
 
 novo, expira = Instagram(os.environ["IG_TOKEN"]).renovar_token()

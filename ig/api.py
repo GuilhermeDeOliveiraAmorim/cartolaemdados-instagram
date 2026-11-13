@@ -1,4 +1,9 @@
-"""Cliente mínimo da API do Instagram (login do Instagram, graph.instagram.com)."""
+"""Cliente mínimo da API do Instagram.
+
+Funciona com o login unificado (graph.facebook.com, token de sistema do portfólio) e com o
+login do Instagram legado (graph.instagram.com). Os endpoints de publicação e métricas são os
+mesmos; muda só como se descobre o id da conta e como se renova o token.
+"""
 import time
 
 import requests
@@ -14,7 +19,7 @@ class Instagram:
     def __init__(self, token):
         self.token = token
         self.base = f"{config.IG_HOST}/{config.IG_VERSAO}"
-        self._id = None
+        self._id = config.IG_USER_ID
 
     def _req(self, metodo, caminho, **params):
         params["access_token"] = self.token
@@ -30,11 +35,22 @@ class Instagram:
     @property
     def ig_id(self):
         if not self._id:
-            self._id = self.eu()["user_id"]
+            if config.IG_LOGIN == "unificado":
+                contas = self._req("GET", "me/assigned_instagram_accounts", fields="id,username")["data"]
+                if not contas:
+                    raise ErroIG("o token não tem nenhuma conta do Instagram atribuída")
+                if len(contas) > 1:
+                    raise ErroIG("mais de uma conta atribuída: defina IG_USER_ID (" +
+                                 ", ".join(f"{c.get('username')}={c['id']}" for c in contas) + ")")
+                self._id = contas[0]["id"]
+            else:
+                self._id = self._req("GET", "me", fields="user_id")["user_id"]
         return self._id
 
     def eu(self):
-        return self._req("GET", "me", fields="user_id,username,followers_count,follows_count,media_count")
+        d = self._req("GET", self.ig_id, fields="username,followers_count,follows_count,media_count")
+        d["user_id"] = self.ig_id
+        return d
 
     # Publicação ---------------------------------------------------------
     def _container(self, **params):
@@ -114,5 +130,8 @@ class Instagram:
 
     # Token --------------------------------------------------------------
     def renovar_token(self):
-        d = self._req("GET", f"{config.IG_HOST}/refresh_access_token", grant_type="ig_refresh_token")
+        """Só no login do Instagram legado. O token de sistema do login unificado não usa isso."""
+        if config.IG_LOGIN == "unificado":
+            raise ErroIG("renovação automática só existe no login do Instagram (IG_LOGIN=instagram)")
+        d = self._req("GET", "https://graph.instagram.com/refresh_access_token", grant_type="ig_refresh_token")
         return d["access_token"], d.get("expires_in")
