@@ -1,0 +1,28 @@
+{
+  "id": "2026-34-previsto-real",
+  "pauta": "previsto-real",
+  "temporada": 2026,
+  "rodada": 34,
+  "formato": "carrossel",
+  "agendado_para": "2026-11-14T12:00:00-03:00",
+  "expira_em": null,
+  "imagens": [
+    "01.jpg",
+    "02.jpg",
+    "03.jpg",
+    "04.jpg"
+  ],
+  "alt_text": [
+    "Rodada 34: o time do modelo fez 92,15 pontos contra 92,45 projetados (-0,30).",
+    "Gráfico de previsto contra real por titular: Walter previsto 5,3, real 3,4; Igor Formiga previsto 6,2, real 2,7; Giay previsto 7,7, real não jogou; Gustavo Gómez previsto 5,5, real 0,5; Alexander Barboza previsto 6,6, real -0,3; Arias previsto 7,5, real 19,2; Carrascal previsto 8,5, real 5,5; Arrascaeta previsto 6,3, real 1,0; Viveros previsto 9,6, real -3,3; Pedro previsto 7,6, real 20,5; Samuel Lino previsto 8,8, real 17,9; Abel Ferreira previsto 7,9, real 10,7.",
+    "Destaques: Melhor do time Pedro 20,5; Pior do time Viveros -3,3; Capitão (1,5×) Viveros -4,9; Reserva de Luxo Renê 2,9.",
+    "Chamada para o diário em cartolaemdados.com.br."
+  ],
+  "legenda": "Rodada 34: o time do modelo fez 92,15 pontos. A projeção era 92,45 (-0,30).\n\nMelhor: Pedro (20,5). Pior: Viveros (-3,3). Capitão Viveros: -3,3 pontos, -4,9 com o 1,5×.\n\nEntre 7 times de especialistas que acompanhamos, a mediana foi 100,80.\n\nTodas as rodadas, previsto × real, em cartolaemdados.com.br (link na bio).\n\nQuanto seu time fez? #CartolaFC #Cartola #Brasileirao #FantasyFootball #DataScience",
+  "gerado_em": "2026-11-13T12:26:00-03:00",
+  "origem": {
+    "estado": "fechada",
+    "pontuado_em_utc": "2026-11-13T15:23:24Z",
+    "commit_modelo": "e68c5c4"
+  }
+}

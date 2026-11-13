@@ -1,0 +1,29 @@
+{
+  "id": "2026-34-temporada",
+  "pauta": "temporada",
+  "temporada": 2026,
+  "rodada": 34,
+  "formato": "carrossel",
+  "agendado_para": "2026-11-14T18:00:00-03:00",
+  "expira_em": null,
+  "imagens": [
+    "01.jpg",
+    "02.jpg",
+    "03.jpg"
+  ],
+  "alt_text": [
+    "Resumo da temporada: 4 rodadas registradas, média real 100,0 contra 87,1 projetados, 3 rodadas acima da projeção.",
+    "Gráfico por rodada: rodada 30: previsto 90,5, real 97,1; rodada 31: previsto 80,6, real 92,8; rodada 33: previsto 84,7, real 118,0; rodada 34: previsto 92,5, real 92,2.",
+    "Chamada para cartolaemdados.com.br."
+  ],
+  "legenda": "O modelo na temporada 2026, até a rodada 34: média de 100,0 pontos por rodada contra 87,1 projetados.\n\nFez mais que a projeção em 3 de 4 rodadas. Superou a mediana dos times de especialistas acompanhados em 3 de 4.\n\nSó contam rodadas em que o time foi registrado antes do fechamento do mercado.\n\nDetalhes em cartolaemdados.com.br (link na bio). #CartolaFC #Cartola #Brasileirao #FantasyFootball #DataScience",
+  "gerado_em": "2026-11-13T12:26:00-03:00",
+  "origem": {
+    "rodadas": [
+      30,
+      31,
+      33,
+      34
+    ]
+  }
+}
