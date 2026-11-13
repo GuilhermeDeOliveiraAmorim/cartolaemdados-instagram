@@ -61,7 +61,7 @@ Para tirar um post da fila antes de publicar: apague a pasta em `main` ou mude `
 
 ## Configuração (uma vez)
 
-Desde o fim de outubro de 2026, a Meta recomenda o **login unificado** para a API do Instagram, e é o que este projeto usa por padrão (`IG_LOGIN=unificado`, API em `graph.facebook.com`). O login do Instagram antigo continua suportado com `IG_LOGIN=instagram`.
+Desde o fim de outubro de 2026, a Meta recomenda o **login unificado** para a API do Instagram, Este projeto aceita os dois tipos de token e decide pelo prefixo: `EA...` é token de sistema do login unificado (API em `graph.facebook.com`, não expira); `IG...` é token do login do Instagram (API em `graph.instagram.com`, vale 60 dias e o `token.yml` renova). Para forçar, defina a variável `IG_LOGIN` (`unificado` ou `instagram`).
 
 1. **Conta profissional** no Instagram (Criador de conteúdo ou Empresa). Não precisa de Página do Facebook.
 2. **App na Meta** ([developers.facebook.com/apps](https://developers.facebook.com/apps)): Criar app, caso de uso **Gerenciar mensagens e conteúdo no Instagram**, sem portfólio no assistente.
