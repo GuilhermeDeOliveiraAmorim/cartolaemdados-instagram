@@ -20,6 +20,7 @@ jobs:
         run: python renovar_token.py
         env:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
-      - run: gh secret set IG_TOKEN --body "${{ steps.novo.outputs.token }}" --repo "${{ github.repository }}"
+      - if: steps.novo.outputs.token != ''
+        run: gh secret set IG_TOKEN --body "${{ steps.novo.outputs.token }}" --repo "${{ github.repository }}"
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}

@@ -6,6 +6,10 @@ import os
 
 from ig.api import Instagram
 
+if not os.environ.get("IG_TOKEN"):
+    print("IG_TOKEN não configurado; nada a renovar")
+    raise SystemExit(0)
+
 novo, expira = Instagram(os.environ["IG_TOKEN"]).renovar_token()
 print(f"::add-mask::{novo}")
 with open(os.environ.get("GITHUB_OUTPUT", os.devnull), "a") as f:

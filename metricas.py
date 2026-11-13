@@ -155,6 +155,9 @@ def main():
     ap.add_argument("--so-relatorio", action="store_true")
     a = ap.parse_args()
     if not a.so_relatorio:
+        if not os.environ.get("IG_TOKEN"):
+            print("IG_TOKEN não configurado; nada a coletar")
+            return
         coletar(Instagram(os.environ["IG_TOKEN"]))
     relatorio()
 

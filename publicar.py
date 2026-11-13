@@ -55,6 +55,8 @@ def main():
             print(f"publicaria {p['id']} ({len(p['imagens'])} imagens), agendado {p['agendado_para']}")
         return
 
+    if not os.environ.get("IG_TOKEN"):
+        sys.exit("IG_TOKEN não configurado: há posts no horário e não dá para publicar")
     ig = Instagram(os.environ["IG_TOKEN"])
     base = url_base()
     falhou = False
