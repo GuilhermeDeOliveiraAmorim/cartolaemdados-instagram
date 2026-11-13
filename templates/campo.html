@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block estilo %}
+.campo { position: relative; flex: 1; margin-top: 24px; border: 2px solid var(--tinta); border-radius: 6px; display: flex; flex-direction: column; justify-content: space-around; padding: 24px 16px;
+  background: repeating-linear-gradient(180deg, rgba(31,122,58,.05) 0 96px, rgba(31,122,58,.09) 96px 192px); }
+.campo::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid rgba(20,35,28,.18); }
+.campo::after { content: ""; position: absolute; left: 50%; top: 50%; width: 200px; height: 200px; margin: -100px; border: 2px solid rgba(20,35,28,.18); border-radius: 50%; }
+.area { position: absolute; left: 50%; width: 400px; margin-left: -200px; height: 110px; border: 2px solid rgba(20,35,28,.18); }
+.area.cima { top: -2px; border-top: 0; } .area.baixo { bottom: -2px; border-bottom: 0; }
+.linha { position: relative; z-index: 1; display: flex; justify-content: center; gap: 12px; }
+.jog { width: 212px; background: var(--papel); border: 2px solid var(--tinta); border-radius: 6px; padding: 12px 14px 12px; position: relative; }
+.jog .pos { font: 600 17px/1 var(--f-dado); letter-spacing: .08em; color: var(--tinta3); }
+.jog .nome { font: 800 32px/1.02 var(--f-titulo); font-stretch: 62%; text-transform: uppercase; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jog .jogo { font: 500 18px/1 var(--f-dado); color: var(--tinta2); margin-top: 8px; }
+.jog .proj { font: 700 30px/1 var(--f-dado); color: var(--previsto); margin-top: 8px; }
+.jog .nome.longo { font-size: 27px; }
+.jog .jogo b { color: var(--tinta); font-weight: 700; }
+.jog.capitao { box-shadow: 0 0 0 5px var(--marca); }
+.jog .cap { position: absolute; top: -16px; right: -14px; }
+.tec { position: absolute; z-index: 1; right: 16px; bottom: 16px; }
+.tec .jog { border-style: dashed; }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">Mandante primeiro · <span class="previsto">azul = projeção</span></div>
+<h2>Escalação {{ time.esquema }}</h2>
+<div class="campo">
+  <div class="area cima"></div><div class="area baixo"></div>
+  {% for fila in linhas %}
+  <div class="linha">
+    {% for a in fila %}
+    <div class="jog{% if a.capitao %} capitao{% endif %}">
+      {% if a.capitao %}<span class="cap">C</span>{% endif %}
+      <div class="pos">{{ a.posicao }} · {{ a.preco|cartoletas }}</div>
+      <div class="nome{% if a.apelido|length > 12 %} longo{% endif %}">{{ a.apelido }}</div>
+      <div class="jogo">{% if a.mando == "fora" %}{{ a.adversario or "?" }} x <b>{{ a.clube }}</b>{% else %}<b>{{ a.clube }}</b> x {{ a.adversario or "?" }}{% endif %}</div>
+      <div class="proj">{{ a.proj|num }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  {% if tecnico %}
+  <div class="tec"><div class="jog">
+    <div class="pos">TEC · {{ tecnico.preco|cartoletas }}</div>
+    <div class="nome{% if tecnico.apelido|length > 12 %} longo{% endif %}">{{ tecnico.apelido }}</div>
+    <div class="jogo">{% if tecnico.mando == "fora" %}{{ tecnico.adversario or "?" }} x <b>{{ tecnico.clube }}</b>{% else %}<b>{{ tecnico.clube }}</b> x {{ tecnico.adversario or "?" }}{% endif %}</div>
+    <div class="proj">{{ tecnico.proj|num }}</div>
+  </div></div>
+  {% endif %}
+</div>
+{% endblock %}

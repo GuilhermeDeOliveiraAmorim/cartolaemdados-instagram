@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block estilo %}
+.legenda-graf { margin-top: 24px; }
+.lista { margin-top: 24px; border-top: 2px solid var(--tinta); flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+.item { max-height: 150px; display: grid; grid-template-columns: 64px 290px 1fr 104px; align-items: center; border-bottom: 1px solid var(--linha); padding: 0; flex: 1; }
+.pos { font: 600 20px/1 var(--f-dado); color: var(--tinta3); letter-spacing: .06em; }
+.nome { font: 800 34px/1 var(--f-titulo); font-stretch: 65%; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; }
+.nome.longo { font-size: 29px; }
+.nome .cap { width: 30px; height: 30px; font-size: 17px; flex: none; }
+.graf { position: relative; height: 100%; }
+.zero { position: absolute; top: 12%; bottom: 12%; width: 2px; background: var(--linha); }
+.haste { position: absolute; top: 50%; height: 4px; margin-top: -2px; background: rgba(20,35,28,.28); border-radius: 2px; }
+.ponto { position: absolute; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; }
+.ponto.prev { border: 4px solid var(--previsto); background: var(--papel); box-shadow: 0 0 0 2px var(--papel); }
+.ponto.real { background: var(--tinta); box-shadow: 0 0 0 2px var(--papel); }
+.valor { text-align: right; font: 700 32px/1 var(--f-dado); }
+.valor small { display: block; font: 500 18px/1 var(--f-dado); color: var(--previsto); margin-top: 6px; }
+.nj { font: italic 400 24px/1 var(--f-texto); color: var(--tinta3); }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">{{ chapeu }}</div>
+<h2>{{ titulo }}</h2>
+<div class="legenda-graf"><span><i class="bola-prev"></i>previsto</span><span><i class="bola-real"></i>real</span>{% if nota_legenda %}<span>{{ nota_legenda }}</span>{% endif %}</div>
+<div class="lista">
+  {% for a in itens %}
+  <div class="item">
+    <span class="pos">{{ a.rotulo }}</span>
+    <span class="nome{% if a.nome|length > 15 %} longo{% endif %}">{{ a.nome }}{% if a.capitao %}<span class="cap">C</span>{% endif %}</span>
+    <div class="graf">
+      <div class="zero" style="left: {{ x(0) }}%"></div>
+      {% if a.real is not none %}
+      <div class="haste" style="left: {{ [x(a.prev), x(a.real)]|min }}%; width: {{ ((x(a.prev) - x(a.real))|abs)|round(2) }}%"></div>
+      {% endif %}
+      <div class="ponto prev" style="left: {{ x(a.prev) }}%"></div>
+      {% if a.real is not none %}<div class="ponto real" style="left: {{ x(a.real) }}%"></div>{% endif %}
+    </div>
+    <span class="valor">{% if a.real is not none %}{{ a.real|num(1) }}{% else %}<span class="nj">não jogou</span>{% endif %}<small>{{ a.prev|num(1) }}</small></span>
+  </div>
+  {% endfor %}
+</div>
+{% if rodape_texto %}<p class="nota" style="margin-top:20px">{{ rodape_texto }}</p>{% endif %}
+{% endblock %}

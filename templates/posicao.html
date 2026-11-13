@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block estilo %}
+.legenda-graf { margin-top: 28px; }
+.trilho-leg { width: 44px; height: 12px; border-radius: 0 4px 4px 0; background: var(--previsto); }
+.teto-leg { width: 4px; height: 26px; background: var(--tinta3); }
+.lista { margin-top: 32px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; border-top: 2px solid var(--tinta); }
+.item { padding: 20px 0 22px; border-bottom: 1px solid var(--linha); }
+.cab { display: flex; align-items: baseline; gap: 18px; }
+.rank { font: 700 26px/1 var(--f-dado); color: var(--tinta3); width: 40px; }
+.nome { font: 800 50px/1 var(--f-titulo); font-stretch: 68%; text-transform: uppercase; }
+.tag { font: 600 18px/1 var(--f-dado); letter-spacing: .06em; text-transform: uppercase; background: var(--marca); padding: 6px 8px; border-radius: 3px; align-self: center; }
+.meta { margin-left: auto; font: 500 24px/1 var(--f-dado); color: var(--tinta2); text-align: right; }
+.meta b { color: var(--tinta); }
+.grafico { position: relative; height: 40px; margin: 18px 0 0 58px; }
+.trilho { position: absolute; left: 0; right: 0; top: 19px; height: 2px; background: var(--linha); }
+.barra { position: absolute; left: 0; top: 13px; height: 14px; background: var(--previsto); border-radius: 0 4px 4px 0; }
+.teto { position: absolute; top: 4px; width: 4px; height: 32px; background: var(--tinta3); margin-left: -2px; }
+.val { position: absolute; top: 6px; font: 700 28px/1 var(--f-dado); color: var(--previsto); padding-left: 14px; }
+.valteto { position: absolute; top: 10px; font: 500 20px/1 var(--f-dado); color: var(--tinta3); padding-left: 10px; }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">Raio-X · top {{ itens|length }} por projeção</div>
+<h2>{{ POSICAO_PLURAL[posicao] }}</h2>
+<div class="legenda-graf"><span><i class="trilho-leg"></i>projeção</span><span><i class="teto-leg"></i>teto (cenário bom)</span></div>
+<div class="lista">
+  {% for a in itens %}
+  <div class="item">
+    <div class="cab">
+      <span class="rank">{{ loop.index }}</span>
+      <span class="nome">{{ a.apelido }}</span>
+      {% if a.no_time %}<span class="tag">no time</span>{% endif %}
+      <span class="meta">{% if a.mando == "fora" %}{{ a.adversario or "?" }} x <b>{{ a.clube }}</b>{% else %}<b>{{ a.clube }}</b> x {{ a.adversario or "?" }}{% endif %} · {{ a.preco|cartoletas }}</span>
+    </div>
+    <div class="grafico">
+      <div class="trilho"></div>
+      <div class="barra" style="width: {{ (a.proj / escala * 100)|round(2) }}%"></div>
+      {% if a.teto %}<div class="teto" style="left: {{ (a.teto / escala * 100)|round(2) }}%"></div>
+      <span class="valteto" style="left: {{ (a.teto / escala * 100)|round(2) }}%">{{ a.teto|num(1) }}</span>{% endif %}
+      <span class="val" style="left: {{ (a.proj / escala * 100)|round(2) }}%">{{ a.proj|num }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

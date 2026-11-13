@@ -1,0 +1,25 @@
+name: Renovar token
+
+# O token de longa duração do Instagram vale 60 dias. Renova toda segunda e grava no segredo IG_TOKEN.
+# Precisa do segredo GH_PAT: token fine-grained deste repositório com permissão "Secrets: read and write".
+on:
+  schedule:
+    - cron: "0 10 * * 1"
+  workflow_dispatch:
+
+jobs:
+  renovar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-ci.txt
+      - id: novo
+        run: python renovar_token.py
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+      - run: gh secret set IG_TOKEN --body "${{ steps.novo.outputs.token }}" --repo "${{ github.repository }}"
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}

@@ -1,0 +1,43 @@
+name: Publicar
+
+# Publica os posts da fila que já estão no horário.
+# Roda no merge de um PR com posts (aprovação) e a cada 30 min para os agendados.
+on:
+  push:
+    branches: [main]
+    paths: ["fila/**/post.json"]
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-ci.txt
+      - name: Publicar
+        run: python publicar.py
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+      - name: Registrar o estado na fila
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add fila
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(fila): estado da publicação"
+            git pull --rebase
+            git push
+          fi

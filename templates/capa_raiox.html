@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block estilo %}
+table { width: 100%; border-collapse: collapse; margin-top: auto; border-top: 2px solid var(--tinta); }
+td { padding: 22px 0; border-bottom: 1px solid var(--linha); font: 500 26px/1.2 var(--f-dado); color: var(--tinta2); vertical-align: baseline; }
+td.pos { width: 100px; font-weight: 600; color: var(--tinta3); }
+td.nome { font: 800 44px/1 var(--f-titulo); font-stretch: 70%; text-transform: uppercase; color: var(--tinta); }
+td.num { text-align: right; font-weight: 700; color: var(--previsto); font-size: 36px; width: 130px; }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">Antes do fechamento do mercado</div>
+<h1>Raio-X<br><span class="marca">rodada {{ rodada }}</span></h1>
+<p class="lead" style="margin-top:32px;max-width:32ch">As maiores projeções do modelo em cada posição, entre os {{ candidatos }} jogadores prováveis.</p>
+<table>
+  {% for l in lideres %}
+  <tr><td class="pos">{{ l.posicao }}</td><td class="nome">{{ l.apelido }}</td><td>{{ l.clube }} x {{ l.adversario or "?" }}</td><td class="num">{{ l.proj|num }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

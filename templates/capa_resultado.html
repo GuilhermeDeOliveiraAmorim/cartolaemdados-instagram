@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block estilo %}
+.duo { display: flex; flex-direction: column; gap: 28px; margin-top: 52px; }
+.duo > div { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--linha); padding-bottom: 12px; }
+.duo .v { font: 700 132px/0.95 var(--f-dado); letter-spacing: -.04em; }
+.duo .etiqueta { font-size: 24px; }
+.duo .v.prev { color: var(--previsto); }
+.saldo { margin-top: 28px; font: 600 40px/1.2 var(--f-dado); }
+.saldo.pos { color: var(--gramado); } .saldo.neg { color: var(--erro); }
+table { width: 100%; border-collapse: collapse; margin-top: auto; border-top: 2px solid var(--tinta); }
+td { padding: 24px 0; border-bottom: 1px solid var(--linha); font: 400 32px/1.25 var(--f-texto); color: var(--tinta2); }
+td.num { text-align: right; font: 700 38px/1 var(--f-dado); color: var(--tinta); white-space: nowrap; padding-left: 24px; }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">Depois da rodada</div>
+<h1>Previsto <span class="marca">× real</span></h1>
+<div class="duo">
+  <div><span class="etiqueta">O time fez</span><div class="v">{{ real|num }}</div></div>
+  <div><span class="etiqueta previsto">O modelo projetou</span><div class="v prev">{{ projecao|num }}</div></div>
+</div>
+<div class="saldo {{ 'pos' if saldo >= 0 else 'neg' }}">{{ saldo|sinal }} pts {{ "acima" if saldo >= 0 else "abaixo" }} da projeção</div>
+<table>
+  {% for l in comparacoes %}<tr><td>{{ l.texto }}</td><td class="num">{{ l.valor }}</td></tr>{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block estilo %}
+.grade2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 48px; border-top: 2px solid var(--tinta); flex: 1; }
+.c { padding: 32px 28px 28px 0; border-bottom: 1px solid var(--linha); display: flex; flex-direction: column; }
+.c:nth-child(2n) { padding-left: 28px; border-left: 1px solid var(--linha); padding-right: 0; }
+.c .nome { font: 800 56px/0.98 var(--f-titulo); font-stretch: 70%; text-transform: uppercase; margin-top: 18px; }
+.c .linha { font: 500 24px/1.3 var(--f-dado); color: var(--tinta2); margin-top: 12px; }
+.c .v { font: 700 84px/1 var(--f-dado); letter-spacing: -.03em; margin-top: auto; padding-top: 20px; }
+.c .v.pos { color: var(--gramado); } .c .v.neg { color: var(--erro); }
+.c .v small { font: 500 24px/1 var(--f-dado); color: var(--previsto); letter-spacing: 0; margin-left: 10px; }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">{{ chapeu }}</div>
+<h2>{{ titulo }}</h2>
+<div class="grade2">
+  {% for c in cartoes %}
+  <div class="c">
+    <span class="etiqueta">{{ c.etiqueta }}</span>
+    <span class="nome">{{ c.nome }}</span>
+    <span class="linha">{{ c.linha }}</span>
+    <span class="v {{ c.get('classe', '') }}">{{ c.valor }}{% if c.get('sub') %}<small>{{ c.sub }}</small>{% endif %}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

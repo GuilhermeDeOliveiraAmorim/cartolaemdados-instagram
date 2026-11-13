@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block estilo %}
+.dom { font: 700 64px/1 var(--f-dado); letter-spacing: -.02em; margin-top: 40px; }
+ul { list-style: none; margin-top: auto; border-top: 2px solid var(--tinta); }
+li { padding: 26px 0; border-bottom: 1px solid var(--linha); font: 400 32px/1.35 var(--f-texto); color: var(--tinta2); display: flex; gap: 24px; align-items: baseline; }
+li b { font: 700 24px/1 var(--f-dado); color: var(--tinta); min-width: 48px; }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">{{ chapeu }}</div>
+<h1>{{ titulo }}</h1>
+<p class="lead" style="margin-top:32px;max-width:30ch">{{ texto }}</p>
+<div class="dom"><span class="marca">{{ DOMINIO }}</span></div>
+<ul>
+  {% for item in itens %}<li><b>{{ "%02d"|format(loop.index) }}</b><span>{{ item }}</span></li>{% endfor %}
+</ul>
+{% endblock %}

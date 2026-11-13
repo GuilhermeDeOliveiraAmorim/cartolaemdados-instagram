@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block estilo %}
+.grande { font: 700 220px/0.9 var(--f-dado); letter-spacing: -.04em; color: var(--previsto); margin-top: 64px; }
+.rotulo { font: 600 40px/1 var(--f-dado); color: var(--previsto); margin-top: 44px; }
+.fichas { margin-top: auto; display: grid; grid-template-columns: 1fr 1fr 1.4fr; border-top: 2px solid var(--tinta); }
+.ficha { padding: 28px 24px 8px 0; }
+.ficha + .ficha { padding-left: 24px; border-left: 1px solid var(--linha); }
+.ficha strong { display: block; font: 700 46px/1.05 var(--f-titulo); font-stretch: 80%; text-transform: uppercase; margin-top: 12px; }
+.ficha span.sub { display: block; font: 500 24px/1.3 var(--f-dado); color: var(--tinta2); margin-top: 8px; }
+{% endblock %}
+{% block corpo %}
+<div class="chapeu">Antes do fechamento do mercado</div>
+<h1>O time do <span class="marca">modelo</span></h1>
+<div class="grande">{{ time.projecao|num }}</div>
+<div class="rotulo">pontos projetados</div>
+<p class="lead" style="margin-top:28px;max-width:34ch">Soma das projeções dos titulares, com o capitão valendo 1,5×.</p>
+<div class="fichas">
+  <div class="ficha"><span class="etiqueta">Esquema</span><strong>{{ time.esquema }}</strong></div>
+  <div class="ficha"><span class="etiqueta">Custo</span><strong>{{ time.custo|cartoletas }}</strong></div>
+  <div class="ficha"><span class="etiqueta">Capitão</span><strong>{{ capitao.apelido }}</strong><span class="sub">{{ capitao.clube }} x {{ capitao.adversario }} · <span class="previsto">{{ capitao.proj|num }}</span></span></div>
+</div>
+{% endblock %}

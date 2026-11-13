@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block estilo %}
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+td { padding: 16px 0; border-bottom: 1px solid var(--linha); font: 500 26px/1.2 var(--f-dado); color: var(--tinta2); vertical-align: baseline; }
+td.pos { width: 90px; font-weight: 600; color: var(--tinta3); }
+td.nome { font: 700 38px/1.1 var(--f-titulo); font-stretch: 80%; text-transform: uppercase; color: var(--tinta); }
+td.num { text-align: right; font-weight: 700; color: var(--previsto); width: 120px; font-size: 32px; }
+tr.luxo td { background: var(--marca-fundo); }
+tr.luxo td:first-child { padding-left: 12px; } tr.luxo td:last-child { padding-right: 12px; }
+.bloco + .bloco { margin-top: 56px; }
+.vazio { font: italic 400 30px/1.4 var(--f-texto); color: var(--tinta3); margin-top: 20px; }
+{% endblock %}
+{% block corpo %}
+<div class="bloco">
+  <div class="chapeu">Banco</div>
+  <h2>Quem entra se alguém não jogar</h2>
+  <table>
+    {% for a in banco %}
+    <tr class="{{ 'luxo' if a.papel == 'reserva_de_luxo' else '' }}">
+      <td class="pos">{{ a.posicao }}</td>
+      <td class="nome">{{ a.apelido }}{% if a.papel == 'reserva_de_luxo' %} <span class="etiqueta" style="color:var(--tinta)">Reserva de Luxo</span>{% endif %}</td>
+      <td>{{ a.clube }} x {{ a.adversario or "?" }}</td>
+      <td class="num">{{ a.proj|num }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+<div class="bloco">
+  <div class="chapeu">Consenso que ficou de fora</div>
+  {% if consenso %}
+  <p class="lead" style="max-width:none;font-size:30px">Titulares em 3 ou mais times de especialistas que o modelo não escalou.</p>
+  <table>
+    {% for c in consenso %}
+    <tr>
+      <td class="pos">{{ c.posicao }}</td>
+      <td class="nome">{{ c.apelido }}</td>
+      <td>{{ c.clube }} · em {{ c.times }} times</td>
+      <td class="num">{{ c.proj|num }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="vazio">Nesta rodada o modelo concordou com o consenso dos times acompanhados.</p>
+  {% endif %}
+</div>
+{% endblock %}
