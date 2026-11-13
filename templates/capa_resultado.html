@@ -18,7 +18,7 @@ td.num { text-align: right; font: 700 38px/1 var(--f-dado); color: var(--tinta);
   <div><span class="etiqueta">O time fez</span><div class="v">{{ real|num }}</div></div>
   <div><span class="etiqueta previsto">O modelo projetou</span><div class="v prev">{{ projecao|num }}</div></div>
 </div>
-<div class="saldo {{ 'pos' if saldo >= 0 else 'neg' }}">{{ saldo|sinal }} pts {{ "acima" if saldo >= 0 else "abaixo" }} da projeção</div>
+<div class="saldo {{ 'pos' if saldo >= 0 else 'neg' }}">{{ saldo|abs|num }} pts {{ "acima" if saldo >= 0 else "abaixo" }} da projeção</div>
 <table>
   {% for l in comparacoes %}<tr><td>{{ l.texto }}</td><td class="num">{{ l.valor }}</td></tr>{% endfor %}
 </table>

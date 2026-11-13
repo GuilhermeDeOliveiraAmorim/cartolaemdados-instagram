@@ -51,7 +51,8 @@ def montar(t, n, opcoes):
         {"etiqueta": "Pior do time", "nome": pior["apelido"], "linha": f"{pior['posicao']} · {pior['clube']} x {pior['adversario']}",
          "valor": num(pior["pontos"], 1), "sub": f"proj. {num(pior['proj'], 1)}", "classe": "neg" if pior["pontos"] < 0 else ""},
         {"etiqueta": "Capitão (1,5×)", "nome": cap["apelido"], "linha": f"{cap['clube']} x {cap['adversario']} · fez {num(cap['pontos'], 1)}",
-         "valor": num(cap["pontos"] * 1.5, 1) if cap["pontos"] is not None else "–", "sub": f"proj. {num(cap['proj'] * 1.5, 1)}"},
+         "valor": num(cap["pontos"] * 1.5, 1) if cap["pontos"] is not None else "–", "sub": f"proj. {num(cap['proj'] * 1.5, 1)}",
+         "classe": "neg" if (cap["pontos"] or 0) < 0 else ""},
     ]
     if luxo:
         cartoes.append({"etiqueta": "Reserva de Luxo", "nome": luxo["apelido"], "linha": f"{luxo['posicao']} · {luxo['clube']} x {luxo['adversario']}",
