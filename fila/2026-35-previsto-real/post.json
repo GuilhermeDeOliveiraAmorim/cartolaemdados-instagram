@@ -1,0 +1,28 @@
+{
+  "id": "2026-35-previsto-real",
+  "pauta": "previsto-real",
+  "temporada": 2026,
+  "rodada": 35,
+  "formato": "carrossel",
+  "agendado_para": "2026-11-20T12:00:00-03:00",
+  "expira_em": null,
+  "imagens": [
+    "01.jpg",
+    "02.jpg",
+    "03.jpg",
+    "04.jpg"
+  ],
+  "alt_text": [
+    "Rodada 35: o time do modelo fez 101,69 pontos contra 89,49 projetados (+12,20).",
+    "Gráfico de previsto contra real por titular: Carlos Miguel previsto 5,5, real 3,7; Matheuzinho previsto 7,2, real 7,4; Matheus Bidu previsto 8,1, real 7,0; Wallace previsto 5,0, real 8,9; Léo Ortiz previsto 5,2, real -0,9; Carrascal previsto 7,6, real 11,4; Alan Patrick previsto 5,1, real -0,8; Matheus Pereira previsto 6,8, real 12,6; Pedro previsto 10,5, real 3,3; Samuel Lino previsto 9,3, real 10,2; Kaio César previsto 6,3, real 29,9; Leonardo Jardim previsto 7,7, real 5,7.",
+    "Destaques: Melhor do time Kaio César 29,9; Pior do time Léo Ortiz -0,9; Capitão (1,5×) Pedro 4,9; Reserva de Luxo Artur 4,4.",
+    "Chamada para o diário em cartolaemdados.com.br."
+  ],
+  "legenda": "Rodada 35: o time do modelo fez 101,69 pontos. A projeção era 89,49 (+12,20).\n\nMelhor: Kaio César (29,9). Pior: Léo Ortiz (-0,9). Capitão Pedro: 3,3 pontos, 4,9 com o 1,5×.\n\nEntre 6 times de especialistas que acompanhamos, a mediana foi 69,19.\n\nTodas as rodadas, previsto × real, em cartolaemdados.com.br (link na bio).\n\nQuanto seu time fez? #CartolaFC #Cartola #Brasileirao #FantasyFootball #DataScience",
+  "gerado_em": "2026-11-20T08:40:00-03:00",
+  "origem": {
+    "estado": "fechada",
+    "pontuado_em_utc": "2026-11-20T11:34:17Z",
+    "commit_modelo": "0ac23f8"
+  }
+}
