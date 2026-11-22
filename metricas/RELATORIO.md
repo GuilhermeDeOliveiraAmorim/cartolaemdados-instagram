@@ -1,11 +1,11 @@
 # Relatório do Instagram
 
-Gerado em 21/11/2026 15:37 (Brasília). Métricas da coleta mais recente de cada post. Taxas sobre o alcance.
+Gerado em 22/11/2026 15:58 (Brasília). Métricas da coleta mais recente de cada post. Taxas sobre o alcance.
 
 ## Conta
 
-- Seguidores: **8** em 2026-11-20 (+0 desde 2026-11-12).
-- Alcance, últimos 7 dias: 8.
+- Seguidores: **8** em 2026-11-21 (+0 desde 2026-11-12).
+- Alcance, últimos 7 dias: 7.
 - Visitas ao perfil, últimos 7 dias: 0.
 - Cliques no link, últimos 7 dias: 1.
 
@@ -13,8 +13,8 @@ Gerado em 21/11/2026 15:37 (Brasília). Métricas da coleta mais recente de cada
 
 | Post | Publicado | Alcance | Curtidas | Coment. | Salvos | Compart. | Seguiu | Interação/alcance |
 |---|---|--:|--:|--:|--:|--:|--:|--:|
-| 2026-35-temporada | 20/11 sex 19:52 | 4 | 1 | 0 | 0 | 0 | 0 | 25,0% |
-| 2026-35-previsto-real | 20/11 sex 08:43 | 2 | 2 | 0 | 0 | 0 | 0 | 100,0% |
+| 2026-35-temporada | 20/11 sex 19:52 | 5 | 1 | 0 | 0 | 0 | 0 | 20,0% |
+| 2026-35-previsto-real | 20/11 sex 08:43 | 3 | 2 | 0 | 0 | 0 | 0 | 66,7% |
 | 2026-34-temporada | 14/11 sáb 20:45 | 4 | 2 | 0 | 0 | 0 | 0 | 50,0% |
 | 2026-34-previsto-real | 13/11 sex 12:29 | 6 | 3 | 0 | 0 | 0 | 0 | 50,0% |
 
