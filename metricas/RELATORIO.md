@@ -1,11 +1,11 @@
 # Relatório do Instagram
 
-Gerado em 22/11/2026 15:58 (Brasília). Métricas da coleta mais recente de cada post. Taxas sobre o alcance.
+Gerado em 23/11/2026 20:18 (Brasília). Métricas da coleta mais recente de cada post. Taxas sobre o alcance.
 
 ## Conta
 
-- Seguidores: **8** em 2026-11-21 (+0 desde 2026-11-12).
-- Alcance, últimos 7 dias: 7.
+- Seguidores: **8** em 2026-11-22 (+0 desde 2026-11-12).
+- Alcance, últimos 7 dias: 6.
 - Visitas ao perfil, últimos 7 dias: 0.
 - Cliques no link, últimos 7 dias: 1.
 
