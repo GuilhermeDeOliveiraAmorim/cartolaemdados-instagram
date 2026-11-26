@@ -1,9 +1,12 @@
-"""Pré-rodada: as maiores projeções do modelo por posição (todos os prováveis, não só o time)."""
+"""Pré-rodada: as maiores projeções do modelo por posição (todos os prováveis, não só o time).
+
+Sai depois do fechamento, 2 h depois do time do modelo.
+"""
 from datetime import timedelta
 
 from .. import config, fonte
 from ..formato import POSICAO_PLURAL, num
-from .comum import agora, ctx, legenda, numerar
+from .comum import apos_fechamento, ctx, legenda, numerar
 
 POSICOES = ["GOL", "LAT", "ZAG", "MEI", "ATA", "TEC"]
 TOP = 5
@@ -12,7 +15,7 @@ TOP = 5
 def montar(t, n, opcoes):
     d = fonte.diario(t, n)
     if d["estado"] != "aberta" and not opcoes.get("forcar"):
-        raise fonte.ErroFonte(f"rodada {n} já está fechada; o raio-x é post de antes do fechamento")
+        raise fonte.ErroFonte(f"rodada {n} já está fechada; o raio-x sai entre o fechamento e o pós")
     proj = [a for a in fonte.projecoes(t, n) if a["proj"] is not None]
     no_time = {a["atleta_id"] for a in d["atletas"] if a["papel"] == "titular"}
     por_pos = {p: [dict(a, no_time=a["atleta_id"] in no_time) for a in proj if a["posicao"] == p][:TOP] for p in POSICOES}
@@ -33,7 +36,7 @@ def montar(t, n, opcoes):
                                    texto="Projeção é a média esperada. Teto é o que o jogador faz num cenário bom: quanto maior a distância, mais imprevisível.",
                                    itens=["O modelo considera adversário, mando, forma recente, xG e preço.",
                                           "\"No time\" marca quem está na escalação do modelo.",
-                                          "O time completo sai no próximo post e no site."]),
+                                          "O time completo está no post anterior e no site."]),
                    f"Explicação de projeção e teto, e chamada para {config.DOMINIO}."))
     numerar(slides)
 
@@ -42,12 +45,11 @@ def montar(t, n, opcoes):
         "\n".join(f"{p}: {por_pos[p][0]['apelido']} ({num(por_pos[p][0]['proj'])})" for p in POSICOES if por_pos[p]),
         "Projeção é a média esperada; o traço cinza é o teto, um cenário bom. Quanto mais longe o teto, mais imprevisível.",
         f"Escalação completa do modelo em {config.DOMINIO} (link na bio).",
-        f"Salva para consultar na hora de escalar. {config.HASHTAGS}",
+        f"Depois da rodada a gente confere quem entregou. {config.HASHTAGS}",
     )
-    fecha = fonte.fechamento(t, n)
     return {
         "pauta": "raio-x", "slides": slides, "legenda": texto,
-        "agendado_para": opcoes.get("quando") or agora(),
-        "expira_em": fecha - timedelta(minutes=10) if fecha else None,
+        "agendado_para": apos_fechamento(fonte.fechamento(t, n), opcoes, timedelta(hours=2)),
+        "expira_em": None,
         "origem": {"estado": d["estado"], "escalado_em_utc": d["escalado_em_utc"], "commit_modelo": d["modelo"]["commit"]},
     }

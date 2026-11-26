@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from .. import config
+from .. import config, fonte
 
 
 def agora():
@@ -14,6 +14,15 @@ def proximo(hora, minuto=0, dias=0):
     if alvo <= base:
         alvo += timedelta(days=1)
     return alvo
+
+
+def apos_fechamento(fecha, opcoes, atraso=timedelta(0)):
+    """Posts pré só saem com o mercado fechado: no fechamento (mais o atraso) ou agora, o que vier depois."""
+    if opcoes.get("quando"):
+        return opcoes["quando"]
+    if fecha is None:
+        raise fonte.ErroFonte("sem horário de fechamento em pre/status.json; use --quando")
+    return max(agora(), fecha + atraso)
 
 
 def ctx(d, **extra):

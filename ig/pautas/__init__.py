@@ -12,5 +12,5 @@ PAUTAS = {
     "temporada": temporada,
 }
 # O que gerar em cada momento da rodada.
-PRE = ["raio-x", "time-modelo"]
+PRE = ["time-modelo", "raio-x"]
 POS = ["previsto-real", "temporada"]
