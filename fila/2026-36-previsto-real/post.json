@@ -1,0 +1,28 @@
+{
+  "id": "2026-36-previsto-real",
+  "pauta": "previsto-real",
+  "temporada": 2026,
+  "rodada": 36,
+  "formato": "carrossel",
+  "agendado_para": "2026-11-26T16:04:00-03:00",
+  "expira_em": null,
+  "imagens": [
+    "01.jpg",
+    "02.jpg",
+    "03.jpg",
+    "04.jpg"
+  ],
+  "alt_text": [
+    "Rodada 36: o time do modelo fez 62,23 pontos contra 86,31 projetados (-24,08).",
+    "Gráfico de previsto contra real por titular: Carlos Miguel previsto 5,3, real 5,8; Luciano Juba previsto 7,0, real 1,7; Juninho Capixaba previsto 6,7, real 7,4; Gustavo Gómez previsto 4,4, real 5,7; Ferraresi previsto 4,6, real 0,0; Matheus Pereira previsto 9,5, real 9,9; Carrascal previsto 6,4, real 1,8; Neymar previsto 6,3, real 7,1; Hulk previsto 7,7, real 0,2; Lucas Barbosa previsto 8,7, real 5,2; Canobbio previsto 8,2, real 4,1; Marcão previsto 6,7, real 7,0.",
+    "Destaques: Melhor do time Matheus Pereira 9,9; Pior do time Ferraresi 0,0; Capitão (1,5×) Matheus Pereira 14,9; Reserva de Luxo Gabriel 1,6.",
+    "Chamada para o diário em cartolaemdados.com.br."
+  ],
+  "legenda": "Rodada 36: o time do modelo fez 62,23 pontos. A projeção era 86,31 (-24,08).\n\nMelhor: Matheus Pereira (9,9). Pior: Ferraresi (0,0). Capitão Matheus Pereira: 9,9 pontos, 14,9 com o 1,5×.\n\nEntre 4 times de especialistas que acompanhamos, a mediana foi 63,97.\n\nTodas as rodadas, previsto × real, em cartolaemdados.com.br (link na bio).\n\nQuanto seu time fez? #CartolaFC #Cartola #Brasileirao #FantasyFootball #DataScience",
+  "gerado_em": "2026-11-26T16:04:00-03:00",
+  "origem": {
+    "estado": "fechada",
+    "pontuado_em_utc": "2026-11-24T14:58:22Z",
+    "commit_modelo": "c188bb9"
+  }
+}
