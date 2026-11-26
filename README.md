@@ -4,7 +4,7 @@ Automação do [@cartolaemdados](https://www.instagram.com/cartolaemdados/): ger
 
 ## Conceito
 
-O perfil é a vitrine do diário do modelo (`cartolaemdados.com.br`): o time sai **antes** da bola rolar e o resultado **depois**, acerte ou erre. Como no site, nada sai com o mercado aberto: os posts pré só publicam a partir do fechamento. A identidade visual é a do site: papel quadriculado, marca-texto amarelo, caneta azul para o previsto.
+O perfil é a vitrine do diário do modelo (`cartolaemdados.com.br`): o time sai **antes** da bola rolar e o resultado **depois**, acerte ou erre. Como no site, o time do modelo não sai com o mercado aberto: os posts pré só publicam a partir do fechamento. Pautas sem o time podem sair com o mercado aberto. A identidade visual é a do site: papel quadriculado, marca-texto amarelo, caneta azul para o previsto.
 
 | Momento | Pauta | Formato | Quando publica | O que mostra |
 | --- | --- | --- | --- | --- |
@@ -23,7 +23,7 @@ Regras do conteúdo (as mesmas do site):
 ## Fluxo
 
 ```
-cartola-dados (/escalar ou /pos-rodada → /publicar-site → /publicar-instagram)
+cartola-hub (/rodada-pre ou /rodada-pos: escalar ou pos-rodada → publicar-site → publicar-instagram)
         │  exportar_diario.py (contrato v1 do site)
         ▼
 gerar.py pre|pos --pr      local: renderiza os JPEG e abre um PR com a prévia
@@ -41,7 +41,7 @@ As imagens são servidas pelo próprio repositório (`raw.githubusercontent.com`
 ```bash
 python -m venv .venv && .venv/bin/pip install -r requirements.txt
 
-# o normal é rodar pela skill publicar-instagram do cartola-dados; à mão:
+# o normal é rodar pela skill publicar-instagram do cartola-hub; à mão:
 # depois do /escalar no cartola-dados (gera a qualquer hora, publica a partir do fechamento)
 .venv/bin/python gerar.py pre --pr
 

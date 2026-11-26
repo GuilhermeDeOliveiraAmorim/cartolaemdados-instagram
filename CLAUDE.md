@@ -4,7 +4,7 @@ Automação do @cartolaemdados: gera os posts a partir do modelo do `cartola-dad
 
 ## Quem aciona
 
-O fluxo da rodada é conduzido pelo `cartola-dados`, na skill `publicar-instagram` (`../cartola-dados/.claude/skills/publicar-instagram/SKILL.md`), depois da `publicar-site`. Ela roda `gerar.py pre|pos --pr` daqui. O merge do PR em `main` é a aprovação e publica no horário de cada pauta, por isso exige confirmação explícita do usuário.
+O fluxo da rodada é conduzido pelo `cartola-hub` (clone em `../cartola-hub`), na skill `publicar-instagram` (`../cartola-hub/.claude/skills/publicar-instagram/SKILL.md`), depois da `publicar-site`. As regras de publicação comuns ao site e ao Instagram, com o glossário, estão em `../cartola-hub/docs/regras-publicacao.md`. Ela roda `gerar.py pre|pos --pr` daqui. O merge do PR em `main` é a aprovação e publica no horário de cada pauta, por isso exige confirmação explícita do usuário.
 
 ## O que este repo lê do `cartola-dados`
 
@@ -19,7 +19,7 @@ Mudou algo disso lá, confira aqui. Mudou a leitura aqui, atualize o `docs/insta
 
 ## Regras do conteúdo
 
-* Nada sai com o mercado aberto: posts pré publicam a partir do fechamento, como o site.
+* O time do modelo (escalação, capitão, banco, raio-x) só sai depois do fechamento: posts pré publicam a partir dele, como o site. Pautas sem o time podem publicar com o mercado aberto.
 * Times de especialistas só agregados, sem nome de time ou autor.
 * Ausência de dado é `–`, nunca `0`.
 * Só siglas dos clubes, sem escudos ou fotos da Globo.
