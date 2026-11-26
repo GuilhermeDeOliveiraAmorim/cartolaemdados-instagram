@@ -1,9 +1,11 @@
-"""Pré-rodada: o time escalado pelo modelo, banco, Luxo e o consenso que ficou de fora."""
-from datetime import timedelta
+"""Pré-rodada: o time escalado pelo modelo, banco, Luxo e o consenso que ficou de fora.
+
+Sai depois do fechamento do mercado, como no site.
+"""
 
 from .. import config, fonte
 from ..formato import num, cartoletas
-from .comum import agora, ctx, legenda, numerar
+from .comum import apos_fechamento, ctx, legenda, numerar
 
 
 def _linhas(titulares):
@@ -16,7 +18,7 @@ def _linhas(titulares):
 def montar(t, n, opcoes):
     d = fonte.diario(t, n)
     if d["estado"] != "aberta" and not opcoes.get("forcar"):
-        raise fonte.ErroFonte(f"rodada {n} já está fechada; o time do modelo é post de antes do fechamento")
+        raise fonte.ErroFonte(f"rodada {n} já está fechada; o time do modelo sai entre o fechamento e o pós")
     tit = [a for a in d["atletas"] if a["papel"] == "titular"]
     banco = [a for a in d["atletas"] if a["papel"] != "titular"]
     tec = next((a for a in tit if a["posicao"] == "TEC"), None)
@@ -49,12 +51,11 @@ def montar(t, n, opcoes):
         "A escalação sai de um modelo treinado com o histórico do Cartola desde 2021 e validado rodada a rodada. "
         "Depois da rodada a gente posta o previsto × real, acerte ou erre.",
         f"Diário completo em {config.DOMINIO} (link na bio).",
-        f"Quem você colocaria de capitão? {config.HASHTAGS}",
+        f"Quem foi o seu capitão? {config.HASHTAGS}",
     )
-    fecha = fonte.fechamento(t, n)
     return {
         "pauta": "time-modelo", "slides": slides, "legenda": texto,
-        "agendado_para": opcoes.get("quando") or agora(),
-        "expira_em": fecha - timedelta(minutes=10) if fecha else None,
+        "agendado_para": apos_fechamento(fonte.fechamento(t, n), opcoes),
+        "expira_em": None,
         "origem": {"estado": d["estado"], "escalado_em_utc": d["escalado_em_utc"], "commit_modelo": d["modelo"]["commit"]},
     }
