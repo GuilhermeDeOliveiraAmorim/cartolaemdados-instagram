@@ -12,14 +12,20 @@ td { padding: 24px 0; border-bottom: 1px solid var(--linha); font: 400 32px/1.25
 td.num { text-align: right; font: 700 38px/1 var(--f-dado); color: var(--tinta); white-space: nowrap; padding-left: 24px; }
 {% endblock %}
 {% block corpo %}
+{% set oculto = ocultar_real is defined and ocultar_real %}
+{% if gancho is defined and gancho %}
+<div class="chapeu">{{ gancho.chapeu }}</div>
+<h1>{{ gancho.titulo }} <span class="marca">{{ gancho.marca }}</span></h1>
+{% else %}
 <div class="chapeu">Depois da rodada</div>
 <h1>Previsto <span class="marca">× real</span></h1>
+{% endif %}
 <div class="duo">
-  <div><span class="etiqueta">O time fez</span><div class="v">{{ real|num }}</div></div>
+  <div><span class="etiqueta">O time fez</span><div class="v">{% if oculto %}<span class="marca">?</span>{% else %}{{ real|num }}{% endif %}</div></div>
   <div><span class="etiqueta previsto">O modelo projetou</span><div class="v prev">{{ projecao|num }}</div></div>
 </div>
-<div class="saldo {{ 'pos' if saldo >= 0 else 'neg' }}">{{ saldo|abs|num }} pts {{ "acima" if saldo >= 0 else "abaixo" }} da projeção</div>
-<table>
+<div{% if oculto %} style="visibility:hidden"{% endif %} class="saldo {{ 'pos' if saldo >= 0 else 'neg' }}">{{ saldo|abs|num }} pts {{ "acima" if saldo >= 0 else "abaixo" }} da projeção</div>
+<table{% if oculto %} style="visibility:hidden"{% endif %}>
   {% for l in comparacoes %}<tr><td>{{ l.texto }}</td><td class="num">{{ l.valor }}</td></tr>{% endfor %}
 </table>
 {% endblock %}

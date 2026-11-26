@@ -16,14 +16,15 @@
   --f-titulo: "Archivo", "Arial Narrow", sans-serif; --f-texto: "Source Serif 4", Georgia, serif; --f-dado: "Plex Mono", monospace;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 1080px; height: 1350px; overflow: hidden; }
+html, body { width: {{ tela.largura }}px; height: {{ tela.altura }}px; overflow: hidden; }
 body {
   background-color: var(--papel); color: var(--tinta); font-family: var(--f-texto);
   background-image: linear-gradient(var(--grade) 1px, transparent 1px), linear-gradient(90deg, var(--grade) 1px, transparent 1px);
   background-size: 24px 24px; background-position: -1px -1px;
   -webkit-font-smoothing: antialiased;
 }
-.slide { position: absolute; inset: 0; padding: 72px 72px 64px; display: flex; flex-direction: column; }
+.slide { position: absolute; inset: {{ tela.faixa_topo }}px {{ tela.faixa_direita }}px {{ tela.faixa_base }}px 0; padding: 72px 72px 64px; display: flex; flex-direction: column; }
+.chamada { margin-top: 32px; padding: 22px 28px; border: 2px solid var(--tinta); background: var(--marca); font: 600 30px/1.25 var(--f-dado); color: var(--tinta); }
 .topo { display: flex; justify-content: space-between; align-items: baseline; font: 500 22px/1 var(--f-dado); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta2); padding-bottom: 20px; border-bottom: 2px solid var(--tinta); }
 .topo b { color: var(--tinta); font-weight: 700; }
 .corpo { flex: 1; display: flex; flex-direction: column; padding-top: 48px; min-height: 0; }
@@ -50,6 +51,7 @@ h2 { font: 800 76px/0.98 var(--f-titulo); font-stretch: 75%; text-transform: upp
 <div class="slide">
   <header class="topo"><span><b>Cartola em Dados</b></span><span>{% block topo_dir %}Rodada {{ rodada }} · {{ temporada }}{% endblock %}</span></header>
   <main class="corpo">{% block corpo %}{% endblock %}</main>
+  {% if chamada %}<div class="chamada">{{ chamada }}</div>{% endif %}
   <footer class="rodape"><span class="site">{{ DOMINIO }}</span><span>{% block rodape_dir %}{% if pagina %}{{ pagina }}/{{ paginas }}{% if pagina < paginas %} &nbsp;arraste →{% endif %}{% endif %}{% endblock %}</span></footer>
 </div>
 </body>

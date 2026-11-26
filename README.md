@@ -9,9 +9,16 @@ O perfil é a vitrine do diário do modelo (`cartolaemdados.com.br`): o time sai
 | Momento | Pauta | Formato | Quando publica | O que mostra |
 | --- | --- | --- | --- | --- |
 | Depois do fechamento | `time-modelo` | carrossel, 4 slides | no fechamento do mercado (ou ao aprovar, se for depois) | capa com a projeção, campinho, banco, Luxo e consenso que ficou de fora |
+| Depois do fechamento | `story-time` | story, 1 imagem 9:16 | 1 min depois do `time-modelo` | projeção, esquema e capitão, chamando para o post |
 | Depois do fechamento | `raio-x` | carrossel, 8 slides | 2 h depois do fechamento (ou ao aprovar, se for depois) | top 5 de projeção por posição, com teto e quem está no time |
 | Depois da rodada | `previsto-real` | carrossel, 4 slides | próximo 12:00 | pontos contra projeção, jogador a jogador, destaques |
+| Depois da rodada | `story-resultado` | story, 1 imagem 9:16 | 1 min depois do `previsto-real` | placar previsto × real, média do Cartola e mediana dos especialistas |
+| Depois da rodada | `reel-previsto-real` | reel, uns 22 s | 19:00 do dia do `previsto-real` | o previsto × real em cenas: gancho com o real escondido, revelação, titulares um a um, destaques |
 | Depois da rodada | `temporada` | carrossel, 3 slides | dia seguinte, 18:00 | acumulado previsto × real das rodadas registradas ao vivo |
+
+Com `--quando`, todas as pautas usam o horário dado; o story sai 1 min depois e o reel 2 min depois.
+
+Os stories chamam para o carrossel ("no post de hoje"), por isso só publicam depois que o carrossel da mesma rodada sai (`depende_de` no `post.json`). Se o carrossel falhar, o story espera.
 
 Regras do conteúdo (as mesmas do site):
 
@@ -31,10 +38,11 @@ gerar.py pre|pos --pr      local: renderiza os JPEG e abre um PR com a prévia
         ▼  merge do PR = aprovação
 GitHub Actions publicar.yml  no merge e a cada 30 min: publica o que está no horário
 GitHub Actions metricas.yml  todo dia 09:00: métricas dos posts e da conta, metricas/RELATORIO.md
+                             de hora em hora: coleta final dos stories entre 20 h e 24 h de vida
 GitHub Actions token.yml     toda segunda: renova o token (só no login do Instagram legado)
 ```
 
-As imagens são servidas pelo próprio repositório (`raw.githubusercontent.com`, fixado no commit), por isso **o repositório precisa ser público**. Os segredos ficam nos Secrets do GitHub, nunca no código.
+As imagens são servidas pelo próprio repositório (`raw.githubusercontent.com`, fixado no commit), por isso **o repositório precisa ser público**. O vídeo do reel sobe direto do checkout do Actions por upload resumível (`rupload.facebook.com`) no login unificado; no login do Instagram, onde esse upload não é documentado, vai por URL do repositório. Os segredos ficam nos Secrets do GitHub, nunca no código.
 
 ## Uso
 
@@ -52,8 +60,12 @@ python -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python gerar.py previsto-real --rodada 33 --quando "2026-11-14 12:00"
 ```
 
-- `gerar.py` lê `../cartola-dados` e `../cartola` (troque com `CARTOLA_DADOS` e `CARTOLA_SITE`) e precisa do Google Chrome (`CHROME`).
-- Cada post vira `fila/<temporada>-<rodada>-<pauta>/` com `post.json`, `legenda.txt` e `01.jpg`, `02.jpg`...
+- `gerar.py` lê `../cartola-dados` e `../cartola` (troque com `CARTOLA_DADOS` e `CARTOLA_SITE`) e precisa do Google Chrome (`CHROME`) e do ffmpeg (`FFMPEG`, só para reel).
+- Cada post vira `fila/<temporada>-<rodada>-<pauta>/` com `post.json` e, conforme o formato:
+  - carrossel: `legenda.txt` e `01.jpg`, `02.jpg`... (1080×1350)
+  - story: `01.jpg` (1080×1920), sem legenda, porque a API não aceita legenda em story
+  - reel: `legenda.txt`, `video.mp4` (1080×1920, H.264, 30 fps, áudio AAC silencioso) e `capa.jpg`
+- No 9:16, o conteúdo fica entre 240 px do topo e 400 px da base, fora da interface do Instagram (`FAIXA_TOPO` e `FAIXA_BASE` em `ig/config.py`; medida a verificar no aparelho).
 - Regerar um post não publicado sobrescreve a pasta. Post publicado não é regerado.
 - `publicar.py --simular` mostra o que seria publicado agora.
 - `metricas.py --so-relatorio` regrava o relatório sem chamar a API.
@@ -80,7 +92,8 @@ Desde o fim de outubro de 2026, a Meta recomenda o **login unificado** para a AP
 
 ## Métricas
 
-- `metricas/posts.csv`: uma linha por post e por dia, nos 30 dias depois da publicação (alcance, views, curtidas, comentários, salvos, compartilhamentos, interações, seguidores ganhos, visitas ao perfil). Dá a curva de cada post.
+- `metricas/posts.csv`: uma linha por post e por dia, nos 30 dias depois da publicação (alcance, views, curtidas, comentários, salvos, compartilhamentos, interações, seguidores ganhos, visitas ao perfil). Dá a curva de cada post. Reel tem também tempo médio assistido (ms) e taxa de pulo; story tem respostas.
+- Story só tem métrica nas primeiras 24 h (depois a API não devolve mais nada) e valores abaixo de 5 vêm vazios. Por isso há uma coleta extra de hora em hora para o story entre 20 h e 24 h.
 - `metricas/conta.csv`: uma linha por dia (seguidores, alcance, visitas ao perfil, cliques no link, quem seguiu e deixou de seguir). Algumas métricas de conta só aparecem com 100 seguidores ou mais; até lá ficam vazias.
 - `metricas/RELATORIO.md`: tabela por post, médias por pauta (alcance, salvos e compartilhamentos sobre o alcance) e alerta para a pauta que fica abaixo de 60% do alcance médio em 3 posts ou mais.
 
@@ -94,9 +107,9 @@ publicar.py        publica o que está no horário (Actions)
 metricas.py        coleta métricas e gera o relatório (Actions)
 renovar_token.py   renova o token do login do Instagram legado (Actions)
 checar.py          confere token, conta e cota de publicação
-ig/                config, leitura dos dados, renderização, fila, cliente da API
+ig/                config, leitura dos dados, renderização, vídeo (ffmpeg), fila, cliente da API
 ig/pautas/         uma pauta por arquivo: monta slides, legenda e horário
-templates/         HTML/CSS dos slides (1080×1350) e as fontes do site (OFL)
+templates/         HTML/CSS dos slides (1080×1350 no feed, 1080×1920 em story e reel) e as fontes do site (OFL)
 fila/              posts gerados, aprovados e publicados
 metricas/          CSVs, relatório e histórico de testes (testes.md)
 contexto/          perfil, tom de voz e identidade visual, lidos pelos agentes
@@ -106,4 +119,4 @@ contexto/          perfil, tom de voz e identidade visual, lidos pelos agentes
 
 Os subagentes servem para pauta nova, mudança de legenda ou arte e análise de métricas, na ordem descrita em `.claude/CLAUDE.md`. Antes de usar, complete o que está marcado "a preencher" em `contexto/perfil.md`.
 
-Pauta nova: um arquivo em `ig/pautas/` com `montar(temporada, rodada, opcoes)` e o registro em `ig/pautas/__init__.py`.
+Pauta nova: um arquivo em `ig/pautas/` com `montar(temporada, rodada, opcoes)` e o registro em `ig/pautas/__init__.py`. O formato sai do campo `formato` do dict (carrossel por padrão, `story` ou `reel`); o contrato de cada um está no docstring de `ig/pautas/__init__.py`. Reel é uma sequência de cenas estáticas (template, contexto, segundos, fusão); a animação vem de renderizar o mesmo template em passos, como o `revelados` de `halteres.html`.

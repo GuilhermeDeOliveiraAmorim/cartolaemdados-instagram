@@ -26,10 +26,12 @@ Elementos que aparecem em toda peça e fazem o perfil ser reconhecido sem logo:
 
 ## Grade padrão
 - Feed 4:5, 1080 x 1350 px
+- Story e reel 9:16, 1080 x 1920 px: o quadriculado cobre a tela inteira e a peça de feed fica na área segura, de 240 px do topo a 400 px da base (1280 px de altura, quase a do feed). A mesma área cabe no recorte 3:4 da grade do perfil. Medidas a verificar no aparelho; ficam em `ig/config.py`
+- Story e reel não têm paginação no rodapé; a chamada para o post vai numa faixa amarela acima do rodapé (`chamada` em `base.html`)
 - Margem: 72px nas laterais e no topo, 64px na base (6,7%, abaixo dos 10% da skill)
 - Colunas: coluna única; tabelas e campinho definem a própria grade no template
 - Calha: 36px entre itens de legenda de gráfico
 
 ## Referências
 - Templates: `templates/capa_time.html`, `capa_raiox.html`, `capa_resultado.html`, `campo.html`, `banco.html`, `posicao.html`, `cartoes.html`, `halteres.html`, `cta.html`
-- Peças publicadas: `fila/*/01.jpg` em diante
+- Peças publicadas: `fila/*/01.jpg` em diante; reels em `fila/*/video.mp4` e `capa.jpg`

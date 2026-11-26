@@ -3,6 +3,7 @@
 post.json      o que publicar e quando (gerado localmente, aprovado no merge do PR)
 NN.jpg         as imagens, na ordem do carrossel
 publicado.json escrito pelo publicador (media_id, permalink, horário)
+depende_de     (em post.json) id de outro post que precisa estar publicado antes deste
 erro.json      última falha de publicação
 """
 import json
@@ -45,6 +46,12 @@ def pendentes(agora):
         if quando(p, "agendado_para") <= agora and (exp is None or agora < exp):
             out.append(p)
     return sorted(out, key=lambda p: p["agendado_para"])
+
+
+def aguardando(post):
+    """Id do post de que este depende e que ainda não foi publicado, ou None."""
+    dep = post.get("depende_de")
+    return dep if dep and not (pasta(dep) / "publicado.json").exists() else None
 
 
 def gravar_json(p: Path, nome, dados):

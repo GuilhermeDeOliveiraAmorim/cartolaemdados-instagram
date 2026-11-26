@@ -4,7 +4,8 @@
   python publicar.py --simular               # só mostra o que publicaria
 
 As imagens vão por URL pública do próprio repositório (raw.githubusercontent.com),
-fixada no commit em execução para não pegar cache velho.
+fixada no commit em execução para não pegar cache velho. O vídeo do reel sobe direto do
+checkout (upload resumível) no login unificado e por URL no login do Instagram.
 """
 import argparse
 import json
@@ -26,6 +27,28 @@ def url_base():
     if not repo:
         sys.exit("defina GITHUB_REPOSITORY (dono/repo) para montar as URLs das imagens")
     return f"https://raw.githubusercontent.com/{repo}/{ref}/fila"
+
+
+def enviar(ig, p, base):
+    """Publica um post da fila conforme o formato. Devolve (info da API, URLs usadas)."""
+    raiz = f"{base}/{p['id']}"
+    fmt = p.get("formato", "carrossel")
+    if fmt == "reel":
+        urls = [f"{raiz}/{p['video']}", f"{raiz}/{p['capa']}"]
+        return ig.publicar_reel(p["_pasta"] / p["video"], urls[0], p["legenda"], capa_url=urls[1]), urls
+    if fmt == "story":
+        if p.get("video"):
+            urls = [f"{raiz}/{p['video']}"]
+            return ig.publicar_story(arquivo=p["_pasta"] / p["video"], video_url=urls[0]), urls
+        urls = [f"{raiz}/{p['imagens'][0]}"]
+        return ig.publicar_story(imagem_url=urls[0]), urls
+    urls = [f"{raiz}/{img}" for img in p["imagens"]]
+    return ig.publicar(urls, p["legenda"], p.get("alt_text")), urls
+
+
+def descrever(p):
+    fmt = p.get("formato", "carrossel")
+    return f"reel de {p.get('duracao_s')} s" if fmt == "reel" else f"{fmt}, {len(p['imagens'])} imagem(ns)"
 
 
 def tentativas(post):
@@ -52,7 +75,9 @@ def main():
         return
     if a.simular:
         for p in fila_ok:
-            print(f"publicaria {p['id']} ({len(p['imagens'])} imagens), agendado {p['agendado_para']}")
+            dep = fila.aguardando(p)
+            print(f"publicaria {p['id']} ({descrever(p)}), agendado {p['agendado_para']}"
+                  + (f", depois de {dep} (ainda não publicado)" if dep else ""))
         return
 
     if not os.environ.get("IG_TOKEN"):
@@ -60,10 +85,18 @@ def main():
     ig = Instagram(os.environ["IG_TOKEN"])
     base = url_base()
     falhou = False
-    for p in fila_ok[:MAX_POR_EXECUCAO]:
-        urls = [f"{base}/{p['id']}/{img}" for img in p["imagens"]]
+    feitos = 0
+    for p in fila_ok:
+        if feitos == MAX_POR_EXECUCAO:
+            print(f"{len(fila_ok) - fila_ok.index(p)} post(s) ficam para a próxima execução")
+            break
+        dep = fila.aguardando(p)  # relido a cada post: o carrossel pode ter saído nesta mesma execução
+        if dep:
+            print(f"{p['id']}: aguardando {dep} ser publicado")
+            continue
+        feitos += 1
         try:
-            info = ig.publicar(urls, p["legenda"], p.get("alt_text"))
+            info, urls = enviar(ig, p, base)
         except (ErroIG, Exception) as e:
             falhou = True
             n = tentativas(p) + 1
@@ -73,12 +106,11 @@ def main():
             continue
         fila.gravar_json(p["_pasta"], "publicado.json", {
             "media_id": info["id"], "permalink": info.get("permalink"), "publicado_em": agora().isoformat(),
-            "timestamp_ig": info.get("timestamp"), "urls": urls,
+            "timestamp_ig": info.get("timestamp"), "formato": p.get("formato", "carrossel"),
+            "tipo_ig": info.get("media_product_type"), "urls": urls,
         })
         (p["_pasta"] / "erro.json").unlink(missing_ok=True)
-        print(f"{p['id']}: publicado {info.get('permalink')}")
-    if len(fila_ok) > MAX_POR_EXECUCAO:
-        print(f"{len(fila_ok) - MAX_POR_EXECUCAO} post(s) ficam para a próxima execução")
+        print(f"{p['id']}: publicado ({descrever(p)}) {info.get('permalink') or info['id']}")
     if falhou:
         sys.exit(1)
 

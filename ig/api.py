@@ -5,6 +5,7 @@ login do Instagram legado (graph.instagram.com). Os endpoints de publicação e 
 mesmos; muda só como se descobre o id da conta e como se renova o token.
 """
 import time
+from pathlib import Path
 
 import requests
 
@@ -66,7 +67,40 @@ class Instagram:
             time.sleep(pausa)
         raise ErroIG(f"container {cid} não ficou pronto")
 
+    def _publicar(self, cid, video=False):
+        # Vídeo processa no servidor; a Meta recomenda consultar no máximo uma vez por minuto por 5 min.
+        self._esperar(cid, *((10, 30) if video else ()))
+        mid = self._req("POST", f"{self.ig_id}/media_publish", creation_id=cid)["id"]
+        return self._req("GET", mid, fields="id,permalink,timestamp,media_type,media_product_type")
+
+    def _container_video(self, arquivo, url, **params):
+        """Login unificado: upload resumível do arquivo local (rupload.facebook.com), sem depender de URL pública.
+        A Meta restringe esse upload a alguns tipos de app; se for recusado, cai para video_url.
+        Login do Instagram: o upload resumível não é documentado, vai direto por video_url."""
+        if config.IG_LOGIN == "unificado":
+            try:
+                return self._upload_resumivel(arquivo, **params)
+            except ErroIG as e:
+                print(f"  upload resumível recusado ({e}); tentando por video_url")
+        return self._container(video_url=url, **params)
+
+    def _upload_resumivel(self, arquivo, **params):
+        d = self._req("POST", f"{self.ig_id}/media", upload_type="resumable", **params)
+        cid = d["id"]
+        uri = d.get("uri") or f"https://rupload.facebook.com/ig-api-upload/{config.IG_VERSAO}/{cid}"
+        dados = Path(arquivo).read_bytes()
+        r = requests.post(uri, data=dados, timeout=600, headers={
+            "Authorization": f"OAuth {self.token}", "offset": "0", "file_size": str(len(dados))})
+        try:
+            resp = r.json()
+        except ValueError:
+            resp = {}
+        if r.status_code >= 400 or not resp.get("success"):
+            raise ErroIG(f"upload do vídeo: {r.status_code} {str(resp.get('debug_info') or resp or r.text)[:300]}")
+        return cid
+
     def publicar(self, urls, legenda, alts=None):
+        """Imagem única ou carrossel no feed."""
         alts = alts or [None] * len(urls)
         if len(urls) == 1:
             cid = self._container(image_url=urls[0], caption=legenda, **({"alt_text": alts[0][:1000]} if alts[0] else {}))
@@ -77,36 +111,57 @@ class Instagram:
             for f in filhos:
                 self._esperar(f)
             cid = self._container(media_type="CAROUSEL", children=",".join(filhos), caption=legenda)
-        self._esperar(cid)
-        mid = self._req("POST", f"{self.ig_id}/media_publish", creation_id=cid)["id"]
-        info = self._req("GET", mid, fields="id,permalink,timestamp,media_type")
-        return info
+        return self._publicar(cid)
+
+    def publicar_reel(self, arquivo, url, legenda, capa_url=None, no_feed=True):
+        params = {"media_type": "REELS", "caption": legenda, "share_to_feed": "true" if no_feed else "false"}
+        if capa_url:
+            params["cover_url"] = capa_url
+        return self._publicar(self._container_video(arquivo, url, **params), video=True)
+
+    def publicar_story(self, imagem_url=None, arquivo=None, video_url=None):
+        """Story de imagem (imagem_url) ou de vídeo (arquivo local e video_url). A API não aceita legenda em story."""
+        if imagem_url:
+            return self._publicar(self._container(media_type="STORIES", image_url=imagem_url))
+        return self._publicar(self._container_video(arquivo, video_url, media_type="STORIES"), video=True)
 
     def limite(self):
         d = self._req("GET", f"{self.ig_id}/content_publishing_limit", fields="quota_usage,config")
         return (d.get("data") or [{}])[0]
 
     # Métricas -----------------------------------------------------------
-    METRICAS_POST = ["reach", "views", "likes", "comments", "saved", "shares", "total_interactions", "follows", "profile_visits"]
+    # Métricas válidas para cada tipo de mídia (referência de insights da mídia, revalidada em 26/11/2026).
+    _FEED = ["reach", "views", "likes", "comments", "saved", "shares", "total_interactions", "follows", "profile_visits"]
+    METRICAS_FORMATO = {
+        "carrossel": _FEED, "imagem": _FEED,
+        "reel": ["reach", "views", "likes", "comments", "saved", "shares", "total_interactions",
+                 "ig_reels_avg_watch_time", "reels_skip_rate"],
+        # Story: a API só devolve métricas nas primeiras 24 h, e valor abaixo de 5 vem como erro (#10).
+        "story": ["reach", "views", "replies", "shares", "total_interactions", "follows", "profile_visits"],
+    }
+    METRICAS_POST = list(dict.fromkeys(m for ms in METRICAS_FORMATO.values() for m in ms))
 
-    def insights_post(self, media_id):
-        """Métricas de um post. Pede uma a uma se o lote falhar (nem toda métrica vale para todo tipo)."""
-        def ler(metricas):
-            d = self._req("GET", f"{media_id}/insights", metric=",".join(metricas))
+    def insights_post(self, media_id, formato="carrossel"):
+        """Métricas de um post. Pede uma a uma se o lote falhar (nem toda métrica vale para todo caso)."""
+        metricas = self.METRICAS_FORMATO.get(formato, self._FEED)
+
+        def ler(ms):
+            d = self._req("GET", f"{media_id}/insights", metric=",".join(ms))
             return {m["name"]: (m.get("values") or [{}])[0].get("value", m.get("total_value", {}).get("value")) for m in d["data"]}
         try:
-            return ler(self.METRICAS_POST)
+            return ler(metricas)
         except ErroIG:
             out = {}
-            for m in self.METRICAS_POST:
+            for m in metricas:
                 try:
                     out.update(ler([m]))
                 except ErroIG:
                     out[m] = None
             return out
 
-    def campos_post(self, media_id):
-        return self._req("GET", media_id, fields="like_count,comments_count,timestamp,permalink")
+    def campos_post(self, media_id, formato="carrossel"):
+        campos = "timestamp,permalink" if formato == "story" else "like_count,comments_count,timestamp,permalink"
+        return self._req("GET", media_id, fields=campos)
 
     METRICAS_CONTA = ["reach", "views", "profile_views", "accounts_engaged", "total_interactions", "website_clicks", "follows_and_unfollows"]
 

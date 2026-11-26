@@ -19,7 +19,8 @@ def sugeridos_pontos(d):
     return [s["pontos"] for s in d.get("sugeridos") or [] if s["objetivo"] == "pontos" and s["pontos"] is not None]
 
 
-def montar(t, n, opcoes):
+def dados(t, n, opcoes):
+    """Os números do pós-rodada, os mesmos no carrossel, no story e no reel."""
     d = fonte.diario(t, n, opcoes.get("media_cartola"))
     if d["estado"] != "fechada":
         raise fonte.ErroFonte(f"rodada {n} ainda aberta; rode o /pos-rodada no cartola-dados antes")
@@ -58,7 +59,14 @@ def montar(t, n, opcoes):
         cartoes.append({"etiqueta": "Reserva de Luxo", "nome": luxo["apelido"], "linha": f"{luxo['posicao']} · {luxo['clube']} x {luxo['adversario']}",
                         "valor": num(luxo["pontos"], 1), "sub": f"proj. {num(luxo['proj'], 1)}"})
 
-    saldo = real - proj
+    return {"d": d, "real": real, "proj": proj, "saldo": real - proj, "comp": comp, "sp": sp, "itens": itens, "x": x,
+            "cap": cap, "melhor": melhor, "pior": pior, "cartoes": cartoes}
+
+
+def montar(t, n, opcoes):
+    v = dados(t, n, opcoes)
+    d, real, proj, saldo, comp, sp = v["d"], v["real"], v["proj"], v["saldo"], v["comp"], v["sp"]
+    itens, x, cartoes, cap, melhor, pior = v["itens"], v["x"], v["cartoes"], v["cap"], v["melhor"], v["pior"]
     slides = numerar([
         ("capa_resultado.html", ctx(d, real=real, projecao=proj, saldo=saldo, comparacoes=comp),
          f"Rodada {n}: o time do modelo fez {num(real)} pontos contra {num(proj)} projetados ({sinal(saldo)})."),
@@ -69,10 +77,10 @@ def montar(t, n, opcoes):
         ("cartoes.html", ctx(d, chapeu="Quem decidiu", titulo="Destaques da rodada", cartoes=cartoes),
          "Destaques: " + "; ".join(f"{c['etiqueta']} {c['nome']} {c['valor']}" for c in cartoes) + "."),
         ("cta.html", ctx(d, chapeu="Toda rodada", titulo="Acerte ou erre, a gente mostra",
-                         texto="O modelo publica o time antes do fechamento e o resultado depois. Sem apagar rodada ruim.",
+                         texto="O time é escalado antes do fechamento do mercado e publicado depois. O resultado sai depois do jogo, sem apagar rodada ruim.",
                          itens=["Previsto × real de todas as rodadas no site.",
                                 "Times de especialistas entram só agregados, sem nome.",
-                                "Próxima escalação sai antes do fechamento do mercado."]),
+                                "Próxima escalação sai depois do fechamento do mercado."]),
          f"Chamada para o diário em {config.DOMINIO}."),
     ])
     texto = legenda(
