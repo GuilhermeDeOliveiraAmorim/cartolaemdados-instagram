@@ -97,7 +97,12 @@ ig/                config, leitura dos dados, renderização, fila, cliente da A
 ig/pautas/         uma pauta por arquivo: monta slides, legenda e horário
 templates/         HTML/CSS dos slides (1080×1350) e as fontes do site (OFL)
 fila/              posts gerados, aprovados e publicados
-metricas/          CSVs e relatório
+metricas/          CSVs, relatório e histórico de testes (testes.md)
+contexto/          perfil, tom de voz e identidade visual, lidos pelos agentes
+.claude/agents/    subagentes de conteúdo (estratégia, copy, arte, vídeo, revisão, performance)
+.claude/skills/    conhecimento compartilhado pelos subagentes
 ```
+
+Os subagentes servem para pauta nova, mudança de legenda ou arte e análise de métricas, na ordem descrita em `.claude/CLAUDE.md`. Antes de usar, complete o que está marcado "a preencher" em `contexto/perfil.md`.
 
 Pauta nova: um arquivo em `ig/pautas/` com `montar(temporada, rodada, opcoes)` e o registro em `ig/pautas/__init__.py`.
