@@ -4,12 +4,12 @@ Automação do [@cartolaemdados](https://www.instagram.com/cartolaemdados/): ger
 
 ## Conceito
 
-O perfil é a vitrine do diário do modelo (`cartolaemdados.com.br`): o time sai **antes** da bola rolar e o resultado **depois**, acerte ou erre. A identidade visual é a do site: papel quadriculado, marca-texto amarelo, caneta azul para o previsto.
+O perfil é a vitrine do diário do modelo (`cartolaemdados.com.br`): o time sai **antes** da bola rolar e o resultado **depois**, acerte ou erre. Como no site, nada sai com o mercado aberto: os posts pré só publicam a partir do fechamento. A identidade visual é a do site: papel quadriculado, marca-texto amarelo, caneta azul para o previsto.
 
 | Momento | Pauta | Formato | Quando publica | O que mostra |
 | --- | --- | --- | --- | --- |
-| Antes do fechamento | `raio-x` | carrossel, 8 slides | assim que aprovar; expira 10 min antes do fechamento | top 5 de projeção por posição, com teto e quem está no time |
-| Antes do fechamento | `time-modelo` | carrossel, 4 slides | assim que aprovar; expira 10 min antes do fechamento | capa com a projeção, campinho, banco, Luxo e consenso que ficou de fora |
+| Depois do fechamento | `time-modelo` | carrossel, 4 slides | no fechamento do mercado (ou ao aprovar, se for depois) | capa com a projeção, campinho, banco, Luxo e consenso que ficou de fora |
+| Depois do fechamento | `raio-x` | carrossel, 8 slides | 2 h depois do fechamento (ou ao aprovar, se for depois) | top 5 de projeção por posição, com teto e quem está no time |
 | Depois da rodada | `previsto-real` | carrossel, 4 slides | próximo 12:00 | pontos contra projeção, jogador a jogador, destaques |
 | Depois da rodada | `temporada` | carrossel, 3 slides | dia seguinte, 18:00 | acumulado previsto × real das rodadas registradas ao vivo |
 
@@ -23,7 +23,7 @@ Regras do conteúdo (as mesmas do site):
 ## Fluxo
 
 ```
-cartola-dados (/escalar, /pos-rodada)
+cartola-dados (/escalar ou /pos-rodada → /publicar-site → /publicar-instagram)
         │  exportar_diario.py (contrato v1 do site)
         ▼
 gerar.py pre|pos --pr      local: renderiza os JPEG e abre um PR com a prévia
@@ -41,7 +41,8 @@ As imagens são servidas pelo próprio repositório (`raw.githubusercontent.com`
 ```bash
 python -m venv .venv && .venv/bin/pip install -r requirements.txt
 
-# depois do /escalar no cartola-dados
+# o normal é rodar pela skill publicar-instagram do cartola-dados; à mão:
+# depois do /escalar no cartola-dados (gera a qualquer hora, publica a partir do fechamento)
 .venv/bin/python gerar.py pre --pr
 
 # depois do /pos-rodada (a média do Cartola é opcional)
