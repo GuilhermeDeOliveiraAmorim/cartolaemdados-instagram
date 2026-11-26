@@ -34,7 +34,7 @@ Dados em `metricas/`. Retrato de 2026-11-25:
 - Tempo de produção disponível por semana: **a preencher**. Hoje tudo é gerado por código a cada rodada; peça manual é exceção.
 - Quem grava, quem edita: ninguém grava. Os carrosséis saem de `gerar.py` e são aprovados no merge do PR.
 - O que a marca não faz, em nenhuma hipótese:
-  - publicar com o mercado aberto
+  - publicar o time do modelo com o mercado aberto (post sem o time pode)
   - mostrar time ou autor de especialista (só agregado)
   - usar escudo ou foto da Globo
   - mostrar `0` no lugar de dado ausente
